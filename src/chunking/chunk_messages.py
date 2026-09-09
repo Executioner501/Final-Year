@@ -76,6 +76,17 @@ def naive_time_gap_chunking(
     return chunks
 
 
+# Discourse markers and topic shift indicators common in conversational WhatsApp
+TOPIC_SHIFT_PATTERNS = [
+    r"^\s*(?:by the way|btw|anyway|on another note|speaking of|urgent update|quick update)",
+    r"^\s*(?:did you finish|have you done|what about the assignment|did anyone finish)",
+    r"^\s*(?:where should we go|anyone hungry|lunch|dinner)",
+    r"^\s*(?:urgent|important announcement|attention)",
+]
+import re
+_COMPILED_TOPIC_SHIFTS = [re.compile(p, re.IGNORECASE) for p in TOPIC_SHIFT_PATTERNS]
+
+
 def context_aware_chunking(
     messages: List[MessageRecord],
     max_inactivity_minutes: int = 20,
@@ -85,8 +96,8 @@ def context_aware_chunking(
     """
     Proposed Context-Aware Chunking:
     - Preserves speaker attribution for every turn ([Date Time] Sender: Message)
+    - Enforces topic-shift boundary detection to keep topics coherent
     - Enforces upper/lower bounds on conversational turns to prevent mega-blobs
-    - Identifies conversation boundary shifts
     """
     if not messages:
         return []
@@ -105,12 +116,21 @@ def context_aware_chunking(
         delta_mins = (curr_dt - prev_dt).total_seconds() / 60.0
 
         # Split conditions:
-        # 1. Temporal gap exceeded
+        # 1. Temporal gap exceeded (silence threshold)
         is_time_split = delta_mins > max_inactivity_minutes
-        # 2. Maximum messages exceeded (prevents 200+ message blobs)
+
+        # 2. Topic shift detection
+        is_topic_split = False
+        if len(current_msgs) >= min_chunk_size:
+            for pat in _COMPILED_TOPIC_SHIFTS:
+                if pat.search(msg.text):
+                    is_topic_split = True
+                    break
+
+        # 3. Maximum messages exceeded (hard ceiling)
         is_capacity_split = len(current_msgs) >= max_chunk_size
 
-        if is_time_split or is_capacity_split:
+        if is_time_split or is_topic_split or is_capacity_split:
             chunks.append(_build_chunk(current_msgs, f"CTX-CHUNK-{chunk_counter:03d}", "context_aware"))
             chunk_counter += 1
             current_msgs = [msg]

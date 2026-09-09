@@ -63,8 +63,10 @@ data/processed/*
 # Evaluation & Logs
 logs/
 *.log
-eval_results/
+*.zip
+eval_results/*
 !eval_results/.gitkeep
+!eval_results/*.json
 
 # Node / Web artifacts (if any UI builds are added)
 node_modules/

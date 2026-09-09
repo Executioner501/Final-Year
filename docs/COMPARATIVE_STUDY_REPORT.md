@@ -89,7 +89,7 @@ The table below summarizes the quantitative evaluation across all 25 benchmark q
 | **Naive Time-Gap Baseline** | 92.0% | **100.0%** | **0.960** | **100.0%** | 66.7% |
 | **LangChain Standard RAG** | 84.0% | 96.0% | 0.887 | 92.0% | 33.3% |
 | **LlamaIndex Standard RAG** | 84.0% | **100.0%** | 0.913 | **100.0%** | 66.7% |
-| **Proposed Context-Aware RAG**| 76.0% | 84.0% | 0.800 | 84.0% | **100.0%** |
+| **Proposed Context-Aware RAG**| **84.0%** | **96.0%** | **0.893** | **96.0%** | **100.0%** |
 
 ---
 
@@ -104,7 +104,7 @@ One of the central research contributions of this project is not merely reportin
 | **Naive Time-Gap Baseline** | 0 | 0 | **2 (33.3% of temp)** | 23 (92.0%) |
 | **LangChain Standard RAG** | **1 (4.0%)** | **1 (4.0%)** | **2 (33.3% of temp)** | 21 (84.0%) |
 | **LlamaIndex Standard RAG** | 0 | 0 | **2 (33.3% of temp)** | 23 (92.0%) |
-| **Proposed Context-Aware RAG**| 4 (16.0%) | **0 (0.0%)** | **0 (0.0%)** | 21 (84.0%) |
+| **Proposed Context-Aware RAG**| 1 (4.0%) | **0 (0.0%)** | **0 (0.0%)** | **24 (96.0%)** |
 
 ### Diagnostic Findings:
 

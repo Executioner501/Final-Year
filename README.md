@@ -103,15 +103,78 @@ Raw WhatsApp Chat Export (.txt)
 
 ---
 
-## 🚀 4. Roadmap & Deliverables
+## 🚀 4. Roadmap & Milestone Progress Log
 
-- [x] Initial Project Formulation & Literature Survey
-- [x] Git Repository Setup & Privacy Sanitization
-- [x] Comprehensive System & UI/UX Architecture Design
-- [ ] Chat Parser Implementation (`parse_whatsapp.py`)
-- [ ] Baseline vs. Context-Aware Chunking Engines (`chunk_messages.py`)
-- [ ] Vector Embedding & Storage Integration (FAISS / ChromaDB)
-- [ ] Time-Aware Re-ranking Engine
-- [ ] Grounded Answer Generation with Citation Traceability
-- [ ] Diagnostic Evaluation Benchmarking & Failure Taxonomy
-- [ ] Interactive Prototype Dashboard & Presentation Deliverables
+| Stage | Milestone / Task | Status | Script / Artifact |
+| :--- | :--- | :---: | :--- |
+| **Stage 1** | Chat Parsing & Multi-line Sanitization | ✅ Completed | `src/parser/parse_whatsapp.py` |
+| **Stage 2** | Baseline vs. Context-Aware Chunking Engines | ✅ Completed | `src/chunking/chunk_messages.py` |
+| **Stage 3** | Embedding & Vector Storage (Local-First) | ✅ Completed | `src/indexing/vector_store.py` |
+| **Stage 4** | Benchmark Query Sets (25-query & 18-query suites) | ✅ Completed | `data/benchmarks/` |
+| **Stage 5** | Baseline Retrieval Test (Naive Time-Gap 30m) | ✅ Completed | `scripts/run_naive_baseline.py` |
+| **Stage 6** | Framework Benchmarking (LangChain & LlamaIndex) | ✅ Completed | `scripts/run_langchain.py`, `scripts/run_llamaindex.py` |
+| **Stage 7** | Adapted Retrieval Design (Attributed + Time-Decay) | ✅ Completed | `scripts/run_context_aware.py`, `src/retrieval/ranker.py` |
+| **Stage 8** | Empirical Comparative Study & Failure Taxonomy | ✅ Completed | `src/evaluation/run_comparative_study.py`, `scripts/compare_results.py` |
+| **Stage 9** | Interactive Prototype Visualizer Studio | ✅ Completed | `ui/index.html` (Vanilla HTML/CSS/JS) |
+
+---
+
+## 📊 5. Empirical Benchmark Results
+
+### 5.1 Comparative Study: Standard vs. Proposed Frameworks (25-Query Ground Truth Suite)
+
+Evaluated on multi-turn dialogue containing multi-party continuations, temporal decision reversals (January vs. August), and speaker attributions using `sentence-transformers/all-MiniLM-L6-v2`:
+
+| Framework | Hit Rate @ 1 | Hit Rate @ 3 | MRR | Speaker Attrib Acc | Temporal Validity Rate | Clean (No Failure) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Naive Time-Gap Baseline** | **92.0%** | **100.0%** | **0.960** | **100.0%** | 66.7% | 23 / 25 |
+| **LangChain Standard RAG** | 84.0% | 96.0% | 0.887 | 92.0% | 33.3% | 21 / 25 |
+| **LlamaIndex Standard RAG** | 84.0% | **100.0%** | 0.913 | **100.0%** | 66.7% | 23 / 25 |
+| **Proposed Context-Aware RAG** | 84.0% | 96.0% | 0.893 | 96.0% | **100.0%** | **24 / 25** |
+
+### 5.2 Failure Mode Distribution
+
+| Framework | Bad Boundary | Lost Speaker Context | Wrong Time Window | Total Failures |
+| :--- | :---: | :---: | :---: | :---: |
+| **Naive Time-Gap Baseline** | 0 | 0 | 2 | 2 |
+| **LangChain Standard RAG** | 1 | 1 | 2 | 4 |
+| **LlamaIndex Standard RAG** | 0 | 0 | 2 | 2 |
+| **Proposed Context-Aware RAG** | 1 | 0 | **0** | **1** |
+
+> [!TIP]
+> **Key Finding**: Generic document-oriented frameworks (LangChain / LlamaIndex) suffer up to a **66.7% temporal failure rate**, repeatedly retrieving outdated January decisions rather than current August decisions. The Proposed Context-Aware RAG achieves **100.0% temporal validity** with zero time-inversion failures.
+
+---
+
+## 📚 6. Literature Review Summary
+
+| # | Paper | Year | Methodology | Gap Relative to Conversational RAG |
+|---|-------|------|-------------|-----------------------------------|
+| 1 | **SECOM** (Pang et al., ICLR) | 2025 | Segment-level memory + compression-based denoising | Single-user AI dialogue only; lacks multi-speaker attribution |
+| 2 | **MemGPT** (Packer et al.) | 2023 | OS-inspired hierarchical memory paging | Assumes single 1-on-1 dialogue; does not handle multi-party chats |
+| 3 | **Alonso et al.** | 2024 | Time-sensitive long-term memory | Time-awareness applied only within single-user assistant memory |
+| 4 | **Gutiérrez et al.** | 2025 | Non-parametric continual learning | Built for general knowledge/QA corpora, not personal chat |
+| 5 | **MultiHop-RAG** (Tang & Yang) | 2024 | Multi-hop QA benchmark | Evaluates structured news/document prose, not fragmented messaging |
+
+---
+
+## 💻 7. Reproducing the Comparative Study
+
+Run the benchmark suite using the self-contained evaluation scripts in `scripts/`:
+
+```powershell
+# 1. Verify Python dependencies
+python scripts/check_env.py
+
+# 2. Run individual framework benchmark evaluations
+python scripts/run_naive_baseline.py
+python scripts/run_langchain.py
+python scripts/run_llamaindex.py
+python scripts/run_context_aware.py
+
+# 3. View the aggregated comparison table and category breakdown
+python scripts/compare_results.py
+
+# 4. Run the comprehensive automated 25-query diagnostic evaluation
+python -m src.evaluation.run_comparative_study
+```

@@ -12,9 +12,14 @@ Usage:
 """
 
 import os
-import json
+import sys
 from typing import List, Dict, Any
+import json
 import numpy as np
+
+# Ensure workspace root is in sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from sentence_transformers import SentenceTransformer
 from src.parser.parse_whatsapp import MessageRecord
 from src.chunking.chunk_messages import context_aware_chunking, ConversationChunk
@@ -45,15 +50,25 @@ def build_context_aware_index(chat_name: str, model: SentenceTransformer):
     raw_msgs = load_json(parsed_file)
     
     # Convert to MessageRecord objects
-    records = [
-        MessageRecord(
-            date=m.get("date", ""),
-            time=m.get("time", ""),
-            sender=m.get("sender", ""),
-            text=m.get("text", "")
+    records = []
+    for i, m in enumerate(raw_msgs):
+        d = m.get("date", "01/01/2026")
+        t = m.get("time", "12:00")
+        txt = m.get("text", "")
+        records.append(
+            MessageRecord(
+                message_id=m.get("message_id", f"MSG-{i+1:04d}"),
+                timestamp=f"{d} {t}",
+                date=d,
+                time=t,
+                sender=m.get("sender", "User"),
+                text=txt,
+                is_system=m.get("is_system", False),
+                has_media=m.get("has_media", False),
+                char_count=len(txt),
+                word_count=len(txt.split())
+            )
         )
-        for m in raw_msgs
-    ]
 
     chunks = context_aware_chunking(records, max_inactivity_minutes=20, max_chunk_size=8)
     print(f"  [Context-Aware] {chat_name}: {len(records)} messages -> {len(chunks)} attributed chunks")

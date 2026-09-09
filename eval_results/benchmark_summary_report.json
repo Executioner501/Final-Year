@@ -1,0 +1,35 @@
+{
+  "frameworks": [
+    "Naive Baseline",
+    "LangChain",
+    "LlamaIndex",
+    "Context-Aware"
+  ],
+  "total_queries": 18,
+  "overall": {
+    "Naive Baseline": {
+      "score_pct": 86.11,
+      "hits": 14,
+      "partials": 3,
+      "misses": 1
+    },
+    "LangChain": {
+      "score_pct": 86.11,
+      "hits": 14,
+      "partials": 3,
+      "misses": 1
+    },
+    "LlamaIndex": {
+      "score_pct": 86.11,
+      "hits": 14,
+      "partials": 3,
+      "misses": 1
+    },
+    "Context-Aware": {
+      "score_pct": 86.11,
+      "hits": 14,
+      "partials": 3,
+      "misses": 1
+    }
+  }
+}

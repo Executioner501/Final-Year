@@ -123,12 +123,8 @@ def main():
             "ground_truth_answer": q.get("ground_truth_answer"),
             "source_text_snippet": q.get("source_text_snippet"),
             "retrieved_chunks": retrieved,
-<<<<<<< HEAD
             "auto_score": score,
             "manual_score": "",  # <-- fill this in yourself by reading retrieved_chunks against ground_truth_answer
-=======
-            "manual_score": score,
->>>>>>> 7a4108417f59e683c7da5ee560b21bd7817f64c3
             "notes": q.get("notes", "")
         })
 

@@ -127,8 +127,12 @@ def main():
             "source_text_snippet": q.get("source_text_snippet"),
             "num_chunks_in_chat": len(chunks_by_chat[chat]),
             "retrieved_chunks": retrieved,
+<<<<<<< HEAD
             "auto_score": score,
             "manual_score": "",  # <-- fill this in yourself by reading retrieved_chunks against ground_truth_answer
+=======
+            "manual_score": score,
+>>>>>>> 7a4108417f59e683c7da5ee560b21bd7817f64c3
             "notes": q.get("notes", "")
         })
 

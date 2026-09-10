@@ -24,8 +24,11 @@ SYSTEM_PATTERNS = [
     re.compile(r"left\s*$", re.IGNORECASE),
     re.compile(r"created group", re.IGNORECASE),
     re.compile(r"changed the subject", re.IGNORECASE),
+<<<<<<< HEAD
     re.compile(r"^You deleted this message$", re.IGNORECASE),
     re.compile(r"^This message was deleted$", re.IGNORECASE),
+=======
+>>>>>>> 7a4108417f59e683c7da5ee560b21bd7817f64c3
 ]
 
 MEDIA_OMITTED_PATTERN = re.compile(r"<Media omitted>", re.IGNORECASE)
@@ -115,18 +118,22 @@ def parse_whatsapp_chat(filepath: str, filter_system: bool = True) -> List[Messa
 
     if filter_system:
         records = [r for r in records if not r.is_system]
+<<<<<<< HEAD
         # Also drop messages that are PURELY a media placeholder (no other text).
         # A message that mentions media alongside real text (e.g. a caption) is kept.
         records = [
             r for r in records
             if not (r.has_media and MEDIA_OMITTED_PATTERN.sub("", r.text).strip() == "")
         ]
+=======
+>>>>>>> 7a4108417f59e683c7da5ee560b21bd7817f64c3
 
     return records
 
 
 def _finalize_record(data: dict) -> MessageRecord:
     text = data["text"]
+<<<<<<< HEAD
     dt_str = f"{data['date']} {data['time']}"
     iso_ts = dt_str  # fallback if nothing matches
     formats = (
@@ -139,6 +146,14 @@ def _finalize_record(data: dict) -> MessageRecord:
     for fmt in formats:
         try:
             dt = datetime.strptime(dt_str, fmt)
+=======
+    # Attempt unified ISO timestamp parse
+    dt_str = f"{data['date']} {data['time']}"
+    iso_ts = dt_str  # fallback
+    for fmt in ("%d/%m/%Y, %H:%M", "%d/%m/%Y %H:%M", "%d/%m/%y, %H:%M", "%d/%m/%y %H:%M"):
+        try:
+            dt = datetime.strptime(dt_str.replace(" -", ""), fmt)
+>>>>>>> 7a4108417f59e683c7da5ee560b21bd7817f64c3
             iso_ts = dt.isoformat()
             break
         except ValueError:
